@@ -117,10 +117,3 @@ if st.button("Analyze Skills"):
     st.subheader("📈 Role Match Visualization")
     st.bar_chart(df.set_index("Role")["Match %"])
 
-# =========================
-# FOOTER
-# =========================
-st.markdown("""
-<hr>
-<center>Created by <b>Leela Vinodini</b> 💖</center>
-""", unsafe_allow_html=True)
