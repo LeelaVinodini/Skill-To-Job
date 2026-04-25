@@ -7,13 +7,27 @@ import pandas as pd
 st.set_page_config(page_title="SkillBridge AI", layout="wide")
 
 # =========================
-# SKILL DATABASE
+# EXTENDED ROLE DATABASE
 # =========================
 roles = {
-    "Data Analyst": ["python", "sql", "excel", "power bi"],
-    "Web Developer": ["html", "css", "javascript", "react"],
-    "Machine Learning Engineer": ["python", "machine learning", "numpy", "pandas"],
-    "Backend Developer": ["python", "django", "api", "database"],
+    "Frontend Developer": ["html", "css", "javascript", "react", "bootstrap"],
+    "Backend Developer": ["python", "django", "flask", "api", "database"],
+    "Full Stack Developer": ["html", "css", "javascript", "react", "node", "mongodb"],
+    "Data Analyst": ["python", "sql", "excel", "power bi", "tableau"],
+    "Data Scientist": ["python", "machine learning", "statistics", "pandas", "numpy"],
+    "Machine Learning Engineer": ["python", "machine learning", "deep learning", "tensorflow", "pytorch"],
+    "AI Engineer": ["python", "nlp", "deep learning", "transformers", "llm"],
+    "DevOps Engineer": ["docker", "kubernetes", "aws", "ci/cd", "linux"],
+    "Cloud Engineer": ["aws", "azure", "gcp", "cloud computing", "networking"],
+    "Cybersecurity Analyst": ["network security", "cryptography", "ethical hacking", "firewalls"],
+    "Mobile App Developer": ["flutter", "android", "kotlin", "swift", "react native"],
+    "Game Developer": ["unity", "c#", "unreal engine", "game physics"],
+    "Database Administrator": ["sql", "oracle", "mysql", "database tuning"],
+    "Software Tester (QA)": ["manual testing", "automation testing", "selenium", "jira"],
+    "UI/UX Designer": ["figma", "adobe xd", "wireframing", "prototyping"],
+    "Blockchain Developer": ["solidity", "web3", "ethereum", "smart contracts"],
+    "Embedded Systems Engineer": ["c", "microcontrollers", "iot", "arduino"],
+    "Site Reliability Engineer": ["linux", "monitoring", "aws", "scripting"],
 }
 
 # =========================
@@ -30,6 +44,7 @@ def analyze_skills(user_skills):
         results.append({
             "Role": role,
             "Match %": percent,
+            "Matched Skills": match,
             "Missing Skills": ", ".join(missing)
         })
 
@@ -39,10 +54,10 @@ def analyze_skills(user_skills):
 # ROADMAP FUNCTION
 # =========================
 def get_roadmap(missing):
-    if not missing:
+    if not missing or missing == ['']:
         return "You are job-ready! 🎉"
 
-    roadmap = "👉 Learn in this order:\n"
+    roadmap = ""
     for i, skill in enumerate(missing, 1):
         roadmap += f"{i}. {skill}\n"
     return roadmap
@@ -51,16 +66,16 @@ def get_roadmap(missing):
 # UI HEADER
 # =========================
 st.title("🚀 SkillBridge AI")
-st.subheader("Bridge Your Skills to Real Jobs")
+st.subheader("Find Your Perfect Role in IT Industry")
 
 # =========================
-# INPUT SECTION
+# INPUT
 # =========================
 col1, col2 = st.columns(2)
 
 with col1:
     skill_input = st.text_area("Enter your skills (comma separated)",
-                              "python, sql")
+                              "python, sql, html")
 
 with col2:
     resume_input = st.text_area("Paste resume text (optional)")
@@ -70,22 +85,18 @@ with col2:
 # =========================
 if st.button("Analyze Skills"):
     text = (skill_input + " " + resume_input).lower()
-    user_skills = [s.strip() for s in text.split(",")]
+    user_skills = [s.strip() for s in text.replace("\n", ",").split(",") if s.strip()]
 
     df = analyze_skills(user_skills)
 
-    st.success("Analysis Complete")
+    st.success("Analysis Complete ✅")
 
-    # =========================
-    # TOP MATCH
-    # =========================
     top_role = df.iloc[0]
 
     colA, colB, colC = st.columns(3)
-
     colA.metric("Best Role", top_role["Role"])
     colB.metric("Match %", f"{top_role['Match %']}%")
-    colC.metric("Missing Skills", len(top_role["Missing Skills"].split(", ")))
+    colC.metric("Skills Matched", top_role["Matched Skills"])
 
     # =========================
     # TABLE
@@ -96,13 +107,14 @@ if st.button("Analyze Skills"):
     # =========================
     # ROADMAP
     # =========================
-    st.subheader("🧠 Learning Roadmap")
-    st.text(get_roadmap(top_role["Missing Skills"].split(", ")))
+    st.subheader("🧠 Skill Gap Roadmap")
+    missing_list = top_role["Missing Skills"].split(", ")
+    st.text(get_roadmap(missing_list))
 
     # =========================
     # CHART
     # =========================
-    st.subheader("📈 Match Visualization")
+    st.subheader("📈 Role Match Visualization")
     st.bar_chart(df.set_index("Role")["Match %"])
 
 # =========================
